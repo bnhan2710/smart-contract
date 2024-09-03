@@ -44,3 +44,10 @@ contract MyTONContract {
         MyTONContract(contractAddress).setValue{value: 1 ton}(newValue); // Truyền giá trị 1 ton để trả phí gas cho cuộc gọi
     }
 }
+    // Hàm để tự hủy hợp đồng và gửi toàn bộ số dư còn lại cho chủ sở hữu
+    function destroyContract() public {
+        require(msg.sender == owner, "Only the owner can destroy the contract");
+        emit ContractDestroyed(owner, address(this).balance);
+        selfdestruct(owner);
+    }
+}
