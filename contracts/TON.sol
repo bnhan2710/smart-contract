@@ -56,11 +56,26 @@ contract MyTONContract {
         recipient.transfer(amount, true, 3); // 3 là chỉ định của TON để gửi toàn bộ số dư còn lại sau khi trừ phí
     }
 
+        // Hàm để lấy giá trị từ hợp đồng khác
+    function getValueFromContract(address contractAddress) public view returns (uint) {
+        require(msg.sender == owner, "Only the owner can get value from other contracts");
+
+        // Gọi hàm `storedValue` của hợp đồng khác
+        return MyTONContract(contractAddress).storedValue();
+    }
+
     // Hàm để tương tác với một hợp đồng khác
     function interactWithContract(address contractAddress, uint newValue) public {
         require(msg.sender == owner, "Only the owner can interact with other contracts");
 
         // Gọi hàm `setValue` của hợp đồng khác
         MyTONContract(contractAddress).setValue{value: 1 ton}(newValue); // Truyền giá trị 1 ton để trả phí gas cho cuộc gọi
+    }
+}
+    // Hàm để tự hủy hợp đồng và gửi toàn bộ số dư còn lại cho chủ sở hữu
+    function destroyContract() public {
+        require(msg.sender == owner, "Only the owner can destroy the contract");
+        emit ContractDestroyed(owner, address(this).balance);
+        selfdestruct(owner);
     }
 }
