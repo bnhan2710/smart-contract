@@ -27,12 +27,32 @@ contract MyTONContract {
         // msg.value chứa số TON tokens được gửi
     }
 
+    // Danh sách địa chỉ được phép tương tác với hợp đồng
+    mapping(address => bool) public whitelist;
+
+    // Sự kiện khi một địa chỉ được thêm vào whitelist
+    event AddressWhitelisted(address indexed account);
+
+    // Hàm để thêm địa chỉ vào whitelist
+    function addToWhitelist(address account) public {
+        require(msg.sender == owner, "Only the owner can modify the whitelist");
+        whitelist[account] = true;
+        emit AddressWhitelisted(account); // Kích hoạt sự kiện khi một địa chỉ được thêm
+    }
+
+    // Hàm để xóa địa chỉ khỏi whitelist
+    function removeFromWhitelist(address account) public {
+        require(msg.sender == owner, "Only the owner can modify the whitelist");
+        whitelist[account] = false;
+    }
+
     // Hàm để gửi TON tokens đến một địa chỉ khác
     function sendTON(address recipient, uint128 amount) public {
         require(msg.sender == owner, "Only the owner can send TON");
+        require(whitelist[recipient], "Recipient is not whitelisted");
         require(amount <= address(this).balance, "Insufficient balance");
 
-        // Gửi TON tokens, không cần dùng thêm tham số false trong TON
+        // Gửi TON tokens
         recipient.transfer(amount, true, 3); // 3 là chỉ định của TON để gửi toàn bộ số dư còn lại sau khi trừ phí
     }
 
