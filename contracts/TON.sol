@@ -68,8 +68,8 @@ contract MyTONContract {
     function interactWithContract(address contractAddress, uint newValue) public {
         require(msg.sender == owner, "Only the owner can interact with other contracts");
 
-        // Gọi hàm `setValue` của hợp đồng khác
-        MyTONContract(contractAddress).setValue{value: 1 ton}(newValue); // Truyền giá trị 1 ton để trả phí gas cho cuộc gọi
+       MyTONContract(contractAddress).setValue{value: 1 ether}(newValue);
+// Truyền giá trị 1 ton để trả phí gas cho cuộc gọi
     }
 }
     // Hàm để tự hủy hợp đồng và gửi toàn bộ số dư còn lại cho chủ sở hữu
