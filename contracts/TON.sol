@@ -78,4 +78,6 @@ contract MyTONContract {
         emit ContractDestroyed(owner, address(this).balance);
         selfdestruct(owner);
     }
+
+    
 }
