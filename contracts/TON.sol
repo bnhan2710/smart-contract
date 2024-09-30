@@ -79,5 +79,3 @@ contract MyTONContract {
         selfdestruct(owner);
     }
 
-    
-}
