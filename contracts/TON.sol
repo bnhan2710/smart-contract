@@ -9,9 +9,15 @@ contract MyTONContract {
 
     // Sự kiện được kích hoạt khi giá trị được cập nhật
     event ValueUpdated(uint newValue);
+    
+    // Sự kiện khi hợp đồng bị hủy
+    event ContractDestroyed(address indexed owner, uint balance);
 
-    // Hàm khởi tạo (constructor) để đặt chủ sở hữu hợp đồng
-    constructor() public {
+    // Sự kiện khi một địa chỉ được thêm vào whitelist
+    event AddressWhitelisted(address indexed account);
+
+    // Hàm khởi tạo để đặt chủ sở hữu hợp đồng
+    constructor() {
         owner = msg.sender; // msg.sender là người gọi hợp đồng
     }
 
@@ -29,9 +35,6 @@ contract MyTONContract {
 
     // Danh sách địa chỉ được phép tương tác với hợp đồng
     mapping(address => bool) public whitelist;
-
-    // Sự kiện khi một địa chỉ được thêm vào whitelist
-    event AddressWhitelisted(address indexed account);
 
     // Hàm để thêm địa chỉ vào whitelist
     function addToWhitelist(address account) public {
@@ -51,12 +54,12 @@ contract MyTONContract {
         require(msg.sender == owner, "Only the owner can send TON");
         require(whitelist[recipient], "Recipient is not whitelisted");
         require(amount <= address(this).balance, "Insufficient balance");
-
+        
         // Gửi TON tokens
         recipient.transfer(amount, true, 3); // 3 là chỉ định của TON để gửi toàn bộ số dư còn lại sau khi trừ phí
     }
 
-        // Hàm để lấy giá trị từ hợp đồng khác
+    // Hàm để lấy giá trị từ hợp đồng khác
     function getValueFromContract(address contractAddress) public view returns (uint) {
         require(msg.sender == owner, "Only the owner can get value from other contracts");
 
@@ -68,14 +71,14 @@ contract MyTONContract {
     function interactWithContract(address contractAddress, uint newValue) public {
         require(msg.sender == owner, "Only the owner can interact with other contracts");
 
-       MyTONContract(contractAddress).setValue{value: 1 ether}(newValue);
-// Truyền giá trị 1 ton để trả phí gas cho cuộc gọi
-    }
-}
-    // Hàm để tự hủy hợp đồng và gửi toàn bộ số dư còn lại cho chủ sở hữu
-    function destroyContract() public {
-        require(msg.sender == owner, "Only the owner can destroy the contract");
-        emit ContractDestroyed(owner, address(this).balance);
-        selfdestruct(owner);
+        MyTONContract(contractAddress).setValue{value: 1 ton}(newValue);
+        // Truyền giá trị 1 ton để trả phí gas cho cuộc gọi
     }
 
+    // Hàm để tự hủy hợp đồng và gửi toàn bộ số dư còn lại cho chủ sở hữu
+    // function destroyContract() public {
+    //     require(msg.sender == owner, "Only the owner can destroy the contract");
+    //     emit ContractDestroyed(owner, address(this).balance);
+    //     selfdestruct(owner);
+    // }
+}
